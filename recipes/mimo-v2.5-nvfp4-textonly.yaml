@@ -1,0 +1,66 @@
+# Recipe: MiMo-V2.5-NVFP4 on 2x DGX Spark / GB10 (text-only)
+recipe_version: "1"
+name: MiMo-V2.5-NVFP4-TP2-DGX-Spark
+description: >
+  vLLM serving lukealonso/MiMo-V2.5-NVFP4 (310B MoE, NVFP4 expert quant)
+  on a 2x DGX Spark / GB10 cluster with TP=2 via Ray. Text-only mode.
+
+model: lukealonso/MiMo-V2.5-NVFP4
+container: vllm-node-mimo-v25-nvfp4
+cluster_only: true
+solo_only: false
+skip_model_download: true
+
+build_args:
+  - --apply-vllm-pr
+  - "41797"
+
+mods:
+  - mods/drop-caches
+  - mods/fix-mimo-v2-vllm
+  - mods/fix-modelopt-mixed-mxfp8
+
+defaults:
+  port: 8000
+  host: 0.0.0.0
+  served_model_name: MiMo-V2.5-NVFP4
+  tensor_parallel: 2
+  pipeline_parallel: 1
+  gpu_memory_utilization: 0.86
+  max_model_len: 131072
+  max_num_batched_tokens: 16384
+
+env:
+  PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+  TORCH_CUDA_ARCH_LIST: "12.1a"
+  VLLM_USE_RAY_V2_EXECUTOR_BACKEND: "1"
+  VLLM_USE_RAY_COMPILED_DAG_OVERLAP_COMM: "1"
+  VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS: "0"
+  VLLM_ALLOW_LONG_MAX_MODEL_LEN: "1"
+  NCCL_CUMEM_ENABLE: "0"
+  NCCL_NVLS_ENABLE: "0"
+  NCCL_DEBUG: INFO
+  VLLM_NVFP4_GEMM_BACKEND: flashinfer-cutlass
+  VLLM_USE_FLASHINFER_MOE_FP4: "1"
+  VLLM_FLASHINFER_MOE_BACKEND: throughput
+
+command: |-
+  vllm serve lukealonso/MiMo-V2.5-NVFP4 \
+      --served-model-name {served_model_name} \
+      --trust-remote-code \
+      --dtype auto \
+      --kv-cache-dtype fp8_e4m3 \
+      --block-size 64 \
+      --attention-backend triton_attn_diffkv \
+      --host {host} \
+      --port {port} \
+      --tensor-parallel-size {tensor_parallel} \
+      --pipeline-parallel-size {pipeline_parallel} \
+      --distributed-executor-backend ray \
+      --no-async-scheduling \
+      --gpu-memory-utilization {gpu_memory_utilization} \
+      --max-model-len {max_model_len} \
+      --max-num-batched-tokens {max_num_batched_tokens} \
+      --enable-prefix-caching \
+      --enable-chunked-prefill \
+      --load-format instanttensor
