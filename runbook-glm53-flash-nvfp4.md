@@ -83,6 +83,21 @@ Fleet-specific fix required vs the source recipe: `NCCL_IB_GID_INDEX` must be OM
 
 C1 40.0–40.6 vs sweep probe 38.63 (warm-state uplift, same harness). MTP3 acceptance under load: mean accept len 2.71–3.03, per-position ~0.83/0.59/0.42, draft accept 57–68%. vs tonyd2wild's TP4 flagship claim (35.7 tok/s): +12–14% single-stream, 3.2x at C8 aggregate. max-num-seqs=6 queues 2 requests at C8.
 
+### TP4 KV ladder — residual-headroom rule validated (measured 2026-08-27, MTP3, fp8 KV, every rung stress-gated)
+
+Port of tonyd2wild's residual-headroom doctrine (grow the KV slab until only ~8–10 GB MemAvailable remains per node) plus a **long-prefill stress gate** on every rung: boot → decode probe → real 25,176-token prefill → post-gate sanity probe (their 38 GiB config died on exactly this step on their fleet — "serving is not the bar").
+
+| Rung | KV slab | Pool tokens | Concurrency @262K | Decode tok/s | Residual MemAvail/node GiB | Gate |
+|---|---:|---:|---:|---:|---|---|
+| L1 | 16 GiB | 2,298,801 | 8.8× | 42.6 | 32–36 | PASS (25K prefill, 30.6 s) |
+| L2 | 24 GiB | 3,448,201 | 13.2× | 40.9 | 25–28 | PASS |
+| L3 | 32 GiB @262K | 4,597,602 | 17.5× | 39.3 | 16–20 | PASS |
+| L4 | 32 GiB @1M ctx | 4,597,602 | 4.6 full 1M reqs | 38.3 | 15–20 | PASS |
+| **L5** | **40 GiB @1M ctx** | **5,747,003** | **21.9× / 5.75 full 1M reqs** | 39.6 | 9–12 | PASS |
+
+**L5 (40 GiB) is the production ceiling:** cb98 residual lands at 9.0 GiB — the bottom of the edge band; stop here. Our fleet passes 40 GiB where theirs died at 38 GiB (the stress gate is the difference-maker; do not ship a slab bump without it). Decode cost of 9 GiB→40 GiB: within probe noise (42.6→39.6). Production config at max capacity: `--kv-cache-memory 42949672960 --max-model-len 1048576` (everything else as the winner config). At 262K serving, L3's 32 GiB/17.5× keeps more headroom.
+
+
 ## Troubleshooting (symptom → cause → fix)
 
 - Warmup dies `pe_dim must be 64 for fp8_ds_mla` → stock SM12x sparse backend requires DeepSeek packed cache; GLM is NoPE → patch 1 (SM90 NoPE backend → SM121).
