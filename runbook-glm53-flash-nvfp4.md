@@ -97,7 +97,17 @@ C1 40.0–40.6 vs sweep probe 38.63 (warm-state uplift, same harness). MTP3 acce
 
 ## Compared: other models on same hardware
 
-(to be filled after Qwen3.8-Flash-Next NVFP4 campaign on the same pair)
+Qwen3.8-Flash-Next NVFP4 (TP2, cb98+3b24, same harness, 2026-08-27) — full runbook: `runbook-qwen38-flash-next-nvfp4.md`:
+
+| Cell | Qwen3.8-FN TP2 | GLM-5.3 TP2 | GLM-5.3 TP4 |
+|---|---:|---:|---:|
+| Prose C1 tok/s | 48.1 | 27.7 | 40.0 |
+| Prose C8 tok/s | 126.1 | 73.4 | 114.4 |
+| Code C1 tok/s | 63.8 | 28.1 | 40.6 |
+| Code C8 tok/s | 159.9 | 69.3 | 110.9 |
+| KV pool tokens | 600K (bf16) | 528K (fp8) | 1.29M (fp8) |
+
+Qwen3.8-Flash-Next on 2 nodes beats GLM-5.3-Flash on 4 nodes in every throughput cell (SGLang CUDA graphs + NEXTN spec decode vs vLLM enforce-eager + MTP; smaller active-param footprint). GLM counters with the larger fp8 KV pool and 262K-per-request headroom at TP4.
 
 ## Credits
 
