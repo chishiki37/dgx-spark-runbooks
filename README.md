@@ -21,6 +21,7 @@ Companion repos (model-specific, published separately):
 | [MiniMax M2.7 NVFP4](runbook-minimax-m27-nvfp4.md) (superseded by AWQ) | MiniMax-M2.7 | NVFP4 | 2 | ~24–26 | 196K |
 | [Qwen3.6 35B-A3B](runbook-qwen3.6-35b-a3b.md) | nvidia/Qwen3.6-35B-A3B-NVFP4 | NVFP4 / FP8 | 1 | ~42–58 | 262K |
 | [Gemma 4 26B-A4B](runbook-gemma4-26b-a4b.md) | nvidia/Gemma-4-26B-A4B-NVFP4 | NVFP4 | 1 (solo) | not yet benched | 262K |
+| [GLM-5.3 EXL3 Abliterated](runbook-glm53-exl3-abliterated.md) | drowzeys/keys-GLM-5.3-EXL3-Abliterated | EXL3 3-bit | 4 (TP4+DCP4) | 12.6 C1 / 39.7–46.5 agg @ C8 | 1M |
 | [DiffusionGemma 26B](runbook-diffusion-gemma-26b.md) | google/diffusiongemma-26B-A4B-it | BF16 | 1 | ~119 avg (diffusion) | — |
 
 `recipes/` contains the matching sparkrun/vLLM recipe YAMLs (from `eugr/spark-vllm-docker`-style deployments).
