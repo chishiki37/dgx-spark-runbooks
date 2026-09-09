@@ -3,7 +3,8 @@
 **Status:** validated 2026-09-09 · **Nodes:** 4 (gx10-141d head + 3 NFSoRDMA workers) · **Decode:** 26.3 C1 / 56.1 C4 agg / 89.2 C8 agg (2-run means) · **Quality:** GSM8K 98 · HumanEval 92 (n=50) · **Context:** 200K (1M in config, KV-pinned pool 200,064 tok)
 
 GLM-5.3 (743B, 78 layers, `GlmMoeDsaForCausalLM`, 256 experts/8 active) QuantTrio-policy Int4-Int8Mix
-(compressed-tensors, 405 GB, 282 shards, MTP draft block included — `model.layers.78.*`), served on
+(compressed-tensors, 405 GB, 282 shards, MTP draft block included — `model.layers.78.*`; weights:
+[`vikasclawd/GLM-5.3-Int4-Int8Mix`](https://huggingface.co/vikasclawd/GLM-5.3-Int4-Int8Mix)), served on
 4× DGX Spark with **one copy of the weights on gx10-141d, NFSoRDMA-exported to the workers**.
 
 Supersedes the all-local-NVMe lane (27.2/59.1/86.9 on 1d49+3b24+cb98+04af, 2026-08-30): this topology
@@ -164,4 +165,4 @@ Raw JSONs: `~/glm53-i4mix-nfs/results/quality/`.
 
 Launcher (env-knobbed, matched-pair kernel preflight, uniform `/mnt/glm53-int4mix`): controller
 `~/glm53-i4mix-nfs/launch_glm53_i4mix_nfs.sh` + sweep harness + combo driver + raw cell JSONs
-(`~/glm53-i4mix-nfs/results/`). Model weights: `vikasclawd/GLM-5.3-Int4-Int8Mix` on HF.
+(`~/glm53-i4mix-nfs/results/`). Model weights: [`vikasclawd/GLM-5.3-Int4-Int8Mix`](https://huggingface.co/vikasclawd/GLM-5.3-Int4-Int8Mix) on HF.
