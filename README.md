@@ -23,6 +23,7 @@ Companion repos (model-specific, published separately):
 | [Gemma 4 26B-A4B](runbook-gemma4-26b-a4b.md) | nvidia/Gemma-4-26B-A4B-NVFP4 | NVFP4 | 1 (solo) | not yet benched | 262K |
 | [GLM-5.3 EXL3 Abliterated](runbook-glm53-exl3-abliterated.md) | drowzeys/keys-GLM-5.3-EXL3-Abliterated | EXL3 3-bit | 4 (TP4+DCP4) | 12.6 C1 / 39.7–46.5 agg @ C8 | 1M |
 | [GLM-5.3 EXL3 Ablit — cuda-exl3 + DFlash2](runbook-glm53-exl3-cuda-exl3-dflash2.md) | drowzeys/keys-GLM-5.3-EXL3-Abliterated | EXL3 3-bit + cuda-exl3 MoE kernels | 4 (TP4, DCP ladder) | **16.4 C1 / 56.4 agg @ C8 (200K/DCP1)**; 13.8 C1 / 41.9 C8 (1M/DCP4) | 200K–1M |
+| [GLM-5.3 Int4-Int8Mix NFS](runbook-glm53-int4-int8mix-nfs.md) | vikasclawd/GLM-5.3-Int4-Int8Mix (743B) | Int4-Int8Mix | 4 (TP4+MTP, NFS-o-RDMA weights) | 26.3 C1 / 56.1 C4 / 89.2 C8 agg | 200K |
 | [DiffusionGemma 26B](runbook-diffusion-gemma-26b.md) | google/diffusiongemma-26B-A4B-it | BF16 | 1 | ~119 avg (diffusion) | — |
 
 `recipes/` contains the matching sparkrun/vLLM recipe YAMLs (from `eugr/spark-vllm-docker`-style deployments).
