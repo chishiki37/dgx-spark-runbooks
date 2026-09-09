@@ -2,6 +2,8 @@
 
 Deployment runbooks for every model we've run on the DGX Spark cluster (6× GB10, 128 GB unified each, MikroTik CRS812 RoCE fabric — see [`dgx-spark-fabric`](https://github.com/chishiki37/dgx-spark-fabric) for the fabric setup). Each runbook is written from an actual validated deployment, not from upstream docs.
 
+**Master strategy:** every new deployment or optimization campaign follows the [End-to-End Model Serving Recipe Playbook](model-serving-end-to-end-playbook.md) — a gated pipeline (scope → provenance audit → baseline capture → fabric proof → correctness → honest context/concurrency validation → optimization ladder → load/soak → package → canary → maintenance) with evidence labels on every external claim. The runbooks below are its outputs.
+
 Companion repos (model-specific, published separately):
 - [`glm-5.2-quanttrio-4x-dgx-spark`](https://github.com/chishiki37/glm-5.2-quanttrio-4x-dgx-spark) — GLM-5.2 QuantTrio Int4-Int8Mix on 4× Spark
 - [`minimax-h3-av-comfyui-recipe`](https://github.com/chishiki37/minimax-h3-av-comfyui-recipe) — MiniMax-H3 audiovisual generation via ComfyUI
