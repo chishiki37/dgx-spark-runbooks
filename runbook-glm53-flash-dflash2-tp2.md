@@ -53,6 +53,19 @@ NCCL fabric env (fleet-proven, NOT the repo's 192.168.192.x pins): `NCCL_NET=IB 
 
 Correctness gate (delivered engine): Hangul probe 3×3 temp 0 → 0 U+FFFD / 0 control chars; forced tool-call with enum args correct; streaming OK.
 
+### Prompt-matched comparison vs upstream (their `probes/bench_c1c6.py`, `--rounds 2 --max-tokens 400`, temp 1.0/top_p 0.95, salted prompts — prefix cache defeated, PREFIX_FIX cannot inflate)
+
+| C | repo published (k7+eager, 2026-08-28) | ours delivered (k5g+prefixfix, 2026-09-19) | Δ |
+|---|---|---|---|
+| 1 | 35.1 | **37.3** | +6.3% |
+| 2 | 41.6 | **44.3** | +6.5% |
+| 3 | 40.6 | **44.6** | +9.9% |
+| 4 | 47.5 | **56.7** | +19.4% |
+| 5 | 56.2 | **60.2** | +7.1% |
+| 6 | 47.7 | **66.4** | +39.2% |
+
+Zero failures, all levels. Baseline parity proof: our shipped-config arm reproduced their real-prompt prose figure exactly (18.80 vs published 18.8). Their CURRENT.md temp-0 table (C1 44.75 … C6 84.82) is a different measurement base (8-prompt set incl. count-to-100, which the repo itself labels an acceptance ceiling, not a decode figure) — not comparable and not chased. Their code single-stream 52.2 is on their code-prompt mix; our 32.09 is on a freeform authoring prompt — prompt-class-relative, no match claim either way.
+
 Sweep arms (all vs shipped baseline, fresh boot each): mns8 (+2.4%/+5.9% C4/C8) · k5 (+10.0%/+18.1%) · k5sched `[[1,3,7],[4,512,5]]` (C4 +11.5%, C8 +12.6%) · graphs (+7.9%/+7.1%) · prefixfix (+4.8%/+9.4%, prefill-driven) · k5m8 · k5g · k5m8g. Repo claims refuted on our battery: k7-better-single-stream and graphs-flat-at-TP2 are prompt-class-relative; k5+graphs stack super-linearly at C1.
 
 ## Untested / blocked
