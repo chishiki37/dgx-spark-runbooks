@@ -26,6 +26,8 @@ Companion repos (model-specific, published separately):
 | [GLM-5.3 EXL3 Abliterated](runbook-glm53-exl3-abliterated.md) | drowzeys/keys-GLM-5.3-EXL3-Abliterated | EXL3 3-bit | 4 (TP4+DCP4) | 12.6 C1 / 39.7–46.5 agg @ C8 | 1M |
 | [GLM-5.3 EXL3 Ablit — cuda-exl3 + DFlash2](runbook-glm53-exl3-cuda-exl3-dflash2.md) | drowzeys/keys-GLM-5.3-EXL3-Abliterated | EXL3 3-bit + cuda-exl3 MoE kernels | 4 (TP4, DCP ladder) | **16.4 C1 / 56.4 agg @ C8 (200K/DCP1)**; 13.8 C1 / 41.9 C8 (1M/DCP4) | 200K–1M |
 | [GLM-5.3 Int4-Int8Mix NFS](runbook-glm53-int4-int8mix-nfs.md) | vikasclawd/GLM-5.3-Int4-Int8Mix (743B) | Int4-Int8Mix | 4 (TP4+MTP, NFS-o-RDMA weights) | 26.3 C1 / 56.1 C4 / 89.2 C8 agg | 200K |
+| [GLM-5.3 Flash NVFP4 + DFlash2](runbook-glm53-flash-dflash2-tp2.md) | RedHatAI/GLM-5.3-Flash-NVFP4 + incoai/GLM-5.3-Flash-DFlash2 | NVFP4 (compressed-tensors W4A4) | 2 (TP2, DFlash2 k5 + CUDA graphs) | **22.7 C1 prose / 32.1 C1 code / 51.2 C4 / 72.4 C8 agg** | 262K |
+| [GLM-5.3 Flash NVFP4 MTP](runbook-glm53-flash-nvfp4.md) (superseded by DFlash2 lane; ModelOpt weights corrupt tokens) | LibertAIDAI/GLM-5.3-Flash-NVFP4 | NVFP4 weight-only | 2 or 4 (TP2/TP4 + MTP-3) | see runbook | 262K–1M |
 | [DiffusionGemma 26B](runbook-diffusion-gemma-26b.md) | google/diffusiongemma-26B-A4B-it | BF16 | 1 | ~119 avg (diffusion) | — |
 
 `recipes/` contains the matching sparkrun/vLLM recipe YAMLs (from `eugr/spark-vllm-docker`-style deployments).
