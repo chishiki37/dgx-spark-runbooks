@@ -17,7 +17,7 @@ Companion repos (model-specific, published separately):
 | [DeepSeek V4 Flash (FP8, jasl fork)](runbook-deepseek-v4-flash.md) | deepseek-ai/DeepSeek-V4-Flash | FP8 | 2 | ~30 | 200K |
 | [DeepSeek V4 Flash Abliterated](runbook-deepseek-v4-flash-abliterated-dspark.md) | drowzeys/…-DSpark-Abliterated-32-32 (gated) | NVFP4 | 2 | (0731 path) | 1M |
 | [MiMo V2.5](runbook-mimo-v25-nvfp4.md) | MiMo-V2.5 309B-A15B | NVFP4 | 2 | ~19 | 32K |
-| [MiMo V2.6 Flash DFlash TP2](runbook-mimo-v26-flash-dflash-tp2.md) ⭐ current | XiaomiMiMo/MiMo-V2.6-Flash-RL 309B-A15B (omnimodal) | native FP8 + MXFP4 experts | 2 (TP2, DFlash-7; worker via Docker NFS volume) | **55 C1 / 118–121 C4 / 190–194 C8 agg** | 300K |
+| [MiMo V2.6 Flash DFlash TP2](runbook-mimo-v26-flash-dflash-tp2.md) ⭐ current | XiaomiMiMo/MiMo-V2.6-Flash-RL 309B-A15B (omnimodal) | native FP8 + MXFP4 experts | 2 (TP2, DFlash-7; worker via Docker NFS volume) | **48.9 C1 / 100.7 C4 / 162.9 C8 agg** (async-off, correct); 55/121/194 async-on (corruption risk) | 300K |
 | [Hy3 295B](runbook-hy3-295b-nvfp4.md) | Hunyuan-3 295B-A21B | NVFP4-W4A16 | 2 | ~22 | 128K |
 | [Laguna S 2.1](runbook-laguna-s21-nvfp4.md) | poolside/Laguna-S-2.1 118B-A8B | NVFP4 | 1–2 | ~41 (solo) | 262K |
 | [MiniMax M2.7 AWQ](runbook-minimax-m27-awq.md) | MiniMax-M2.7 456B-A45B | AWQ | 2 | ~32 | 131K |

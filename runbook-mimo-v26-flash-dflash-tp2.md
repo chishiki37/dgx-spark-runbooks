@@ -9,7 +9,7 @@
 
 ## Delivered configuration (sweep winner = recipe defaults)
 
-Our two-knob sweep could not beat the upstream defaults — delivered config is the repo's, which makes this a reproduction-plus-C8-data-point runbook.
+Our two-knob sweep could not beat the upstream defaults; upstream then shipped a correctness update (commit `6651626`, same day) which we adopted as the delivered config — `--no-async-scheduling` (async + spec decode corrupts tokens under concurrency, vLLM #46669) plus checkpoint sampling defaults with `repetition_penalty 1.05` (fixes agent tool-call loops). The async-off guard costs 10-16% decode — measured below; we keep it because corrupt tokens under concurrency are disqualifying.
 
 | flag | value | note |
 |---|---|---|
@@ -21,6 +21,8 @@ Our two-knob sweep could not beat the upstream defaults — delivered config is 
 | `--max-num-seqs` | 8 | 16 refuted (below) |
 | `--moe-backend` | marlin | MXFP4 experts; **DeepGEMM must stay off** (`VLLM_USE_DEEP_GEMM=0`, silent SM12x fp8 corruption, DeepGEMM#417) |
 | `--default-chat-template-kwargs` | `{"enable_thinking": false}` | else reasoning leaks into `content` |
+| `--generation-config auto` + `--override-generation-config` | `{"repetition_penalty": 1.05}` | checkpoint temp 1.0/top_p 0.95 as server defaults; rep-penalty fixes agent tool-call loops (upstream: 148-446 identical calls/turn → 7 clean steps) |
+| `--no-async-scheduling` | on (default) | async+DFlash injects foreign-script tokens under concurrency (vLLM #46669); costs 10-16% decode (below) |
 | parsers | `--reasoning-parser mimo --tool-call-parser mimo --enable-auto-tool-choice` | |
 | docker | `--memory 112g --memory-swap 112g --ulimit memlock=-1:-1 --cap-add IPC_LOCK --device /dev/infiniband --network host --ipc host --shm-size 32g` | |
 
@@ -37,7 +39,7 @@ NCCL fabric env (repo defaults matched our fleet): `NCCL_NET=IB NCCL_IB_HCA=roce
 7. **Correctness gate:** greedy exact-reply probe (thinking off → `reasoning_chars 0`), math one-liner (17×23=391 ✓), vision: generated red-square/blue-circle/green-triangle/"MIMO 42" card → all shapes, colors, positions and text read correctly (2.6 s round trip). Audio/video: upstream-verified; not re-run here.
 8. **Bench:** `bench/mimobench.py --levels 1,4,8` (prompt set v1, temp 0, thinking off, salted unique prefixes → no prefix-cache inflation; tokens from server `usage` — spec decode packs multiple tokens per chunk). Quote category with every number: DFlash throughput is acceptance-bound (counting 6.9/7 vs prose ~1.2/7).
 
-## Performance (measured 2026-09-22, C1+C4+C8 battery, two boots of the delivered config)
+## Performance (measured 2026-09-22, C1+C4+C8 battery, two boots — async-sched ON, i.e. pre-6651626 flags; the delivered async-OFF numbers are in the sweep table below)
 
 | C | aggregate tok/s | per-stream tok/s | mean TTFT (s) |
 |---|---|---|---|
@@ -66,9 +68,12 @@ Full reproduction of the upstream recipe on different hardware/fabric; no regres
 
 | arm | C1 per-stream | C4 agg | C8 agg | verdict |
 |---|---|---|---|---|
-| **delivered (SEQS 8, k7)** | **54.3 / 55.0** | **121.4 / 117.6** | **193.9 / 190.1** | winner |
+| recipe defaults, async sched ON | 54.3 / 55.0 | 121.4 / 117.6 | 193.9 / 190.1 | fastest, **corruption risk** (vLLM #46669) |
+| **+ upstream 6651626 (async OFF + gen-config auto + rep 1.05) = delivered** | **48.9** | **100.7** | **162.9** | **correct; −10 to −16% is the corruption guard's cost** |
 | SEQS=16 | 55.1 (+1.5%, noise) | 103.9 (**−14%**) | 174.2 (**−10%**) | rejected |
 | DFlash k=8 | 51.7 (−4.8%) | 113.6 (−6.4%) | 181.8 (−6.2%) | rejected |
+
+Async-off arm detail (same battery, warm compile cache): prefill unchanged (2,322 tok/s @2K); TTFT slightly worse at C4/C8 (0.55/0.68 s vs 0.43/0.55 s); DFlash acceptance unchanged (ceiling 6.9/7, structured 5.9-6.2/7). Upstream had not re-benched after their async-off commit — these are the first published numbers for the corrected config.
 
 k=8 detail: the saturated categories did improve (ceiling-count C1 90.7→96.1, C4 62.8→71.0; structured C1 86.5→89.4) but every mid/low-acceptance category paid the extra draft+verify cost — net negative on any mixed workload. `block_size 8` means k=8 is the structural maximum; no further depth exists.
 
