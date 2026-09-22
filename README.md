@@ -1,6 +1,6 @@
 # DGX Spark Runbooks
 
-Deployment runbooks for every model we've run on the DGX Spark cluster (6× GB10, 128 GB unified each, MikroTik CRS812 RoCE fabric — see [`dgx-spark-fabric`](https://github.com/chishiki37/dgx-spark-fabric) for the fabric setup). Each runbook is written from an actual validated deployment, not from upstream docs.
+Deployment runbooks for every model we've run on the DGX Spark cluster (8× GB10, 128 GB unified each, MikroTik CRS812 RoCE fabric — see [`dgx-spark-fabric`](https://github.com/chishiki37/dgx-spark-fabric) for the fabric setup). Each runbook is written from an actual validated deployment, not from upstream docs.
 
 **Master strategy:** every new deployment or optimization campaign follows the [End-to-End Model Serving Recipe Playbook](model-serving-end-to-end-playbook.md) — a gated pipeline (scope → provenance audit → baseline capture → fabric proof → correctness → honest context/concurrency validation → optimization ladder → load/soak → package → canary → maintenance) with evidence labels on every external claim. The runbooks below are its outputs.
 
@@ -17,6 +17,7 @@ Companion repos (model-specific, published separately):
 | [DeepSeek V4 Flash (FP8, jasl fork)](runbook-deepseek-v4-flash.md) | deepseek-ai/DeepSeek-V4-Flash | FP8 | 2 | ~30 | 200K |
 | [DeepSeek V4 Flash Abliterated](runbook-deepseek-v4-flash-abliterated-dspark.md) | drowzeys/…-DSpark-Abliterated-32-32 (gated) | NVFP4 | 2 | (0731 path) | 1M |
 | [MiMo V2.5](runbook-mimo-v25-nvfp4.md) | MiMo-V2.5 309B-A15B | NVFP4 | 2 | ~19 | 32K |
+| [MiMo V2.6 Flash DFlash TP2](runbook-mimo-v26-flash-dflash-tp2.md) ⭐ current | XiaomiMiMo/MiMo-V2.6-Flash-RL 309B-A15B (omnimodal) | native FP8 + MXFP4 experts | 2 (TP2, DFlash-7; worker via Docker NFS volume) | **55 C1 / 118–121 C4 / 190–194 C8 agg** | 300K |
 | [Hy3 295B](runbook-hy3-295b-nvfp4.md) | Hunyuan-3 295B-A21B | NVFP4-W4A16 | 2 | ~22 | 128K |
 | [Laguna S 2.1](runbook-laguna-s21-nvfp4.md) | poolside/Laguna-S-2.1 118B-A8B | NVFP4 | 1–2 | ~41 (solo) | 262K |
 | [MiniMax M2.7 AWQ](runbook-minimax-m27-awq.md) | MiniMax-M2.7 456B-A45B | AWQ | 2 | ~32 | 131K |
@@ -46,6 +47,6 @@ Companion repos (model-specific, published separately):
 
 ## Cluster notes
 
-- Nodes: 9105 (.1), bdea (.2), 1d49 (.11), 3b24 (.12), ae1e (.13), cb98 (.14) on the 10.10.10.0/24 + 10.10.20.0/24 rails; fabric IPs are systemd-persisted (they do not survive reboot otherwise).
+- Nodes: 9105 (.1), bdea (.2), 1d49 (.11), 3b24 (.12), ae1e (.13), cb98 (.14), 04af (.15), gx10-141d (.16) on the 10.10.10.0/24 + 10.10.20.0/24 rails; fabric IPs are systemd-persisted (they do not survive reboot otherwise).
 - 1d49 hosts ComfyUI (MiniMax H3) permanently — never schedule serving work there.
 - Provenance: fleet reports 2026-07-24 and 2026-08-01; DS4-DSpark autoresearch 2026-08-05.
