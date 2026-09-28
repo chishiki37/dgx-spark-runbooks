@@ -1,0 +1,361 @@
+{
+  "benchmark": "GSM8K",
+  "model": "mimo-v2.6-pro",
+  "correct": 44,
+  "total": 50,
+  "accuracy": 88.0,
+  "extraction_artifacts": 0,
+  "true_capability_estimate": 88.0,
+  "results": [
+    {
+      "q": 0,
+      "got": "18",
+      "expected": "18",
+      "tokens": 154,
+      "elapsed": 2.6141974925994873
+    },
+    {
+      "q": 1,
+      "got": "3",
+      "expected": "3",
+      "tokens": 123,
+      "elapsed": 2.381148338317871
+    },
+    {
+      "q": 2,
+      "got": "70000",
+      "expected": "70000",
+      "tokens": 402,
+      "elapsed": 5.66340708732605
+    },
+    {
+      "q": 3,
+      "got": "540",
+      "expected": "540",
+      "tokens": 116,
+      "elapsed": 1.9314422607421875
+    },
+    {
+      "q": 4,
+      "got": "20",
+      "expected": "20",
+      "tokens": 235,
+      "elapsed": 6.547889709472656
+    },
+    {
+      "q": 5,
+      "got": "64",
+      "expected": "64",
+      "tokens": 289,
+      "elapsed": 5.385267019271851
+    },
+    {
+      "q": 6,
+      "got": "260",
+      "expected": "260",
+      "tokens": 202,
+      "elapsed": 2.6537256240844727
+    },
+    {
+      "q": 7,
+      "got": "160",
+      "expected": "160",
+      "tokens": 314,
+      "elapsed": 5.408329963684082
+    },
+    {
+      "q": 8,
+      "got": "45",
+      "expected": "45",
+      "tokens": 448,
+      "elapsed": 6.073296308517456
+    },
+    {
+      "q": 9,
+      "got": "460",
+      "expected": "460",
+      "tokens": 238,
+      "elapsed": 3.683997869491577
+    },
+    {
+      "q": 10,
+      "got": "366",
+      "expected": "366",
+      "tokens": 215,
+      "elapsed": 2.9270875453948975
+    },
+    {
+      "q": 11,
+      "got": "694",
+      "expected": "694",
+      "tokens": 181,
+      "elapsed": 3.3611388206481934
+    },
+    {
+      "q": 12,
+      "got": "12",
+      "expected": "13",
+      "tokens": 1420,
+      "elapsed": 28.525734901428223
+    },
+    {
+      "q": 13,
+      "got": "18",
+      "expected": "18",
+      "tokens": 450,
+      "elapsed": 8.88090991973877
+    },
+    {
+      "q": 14,
+      "got": "60",
+      "expected": "60",
+      "tokens": 311,
+      "elapsed": 5.606630563735962
+    },
+    {
+      "q": 15,
+      "got": "96",
+      "expected": "125",
+      "tokens": 341,
+      "elapsed": 5.22670578956604
+    },
+    {
+      "q": 16,
+      "got": "230",
+      "expected": "230",
+      "tokens": 110,
+      "elapsed": 2.2248401641845703
+    },
+    {
+      "q": 17,
+      "got": "57500",
+      "expected": "57500",
+      "tokens": 164,
+      "elapsed": 2.53666090965271
+    },
+    {
+      "q": 18,
+      "got": "7",
+      "expected": "7",
+      "tokens": 126,
+      "elapsed": 2.1100099086761475
+    },
+    {
+      "q": 19,
+      "got": "6",
+      "expected": "6",
+      "tokens": 373,
+      "elapsed": 6.40531325340271
+    },
+    {
+      "q": 20,
+      "got": "15",
+      "expected": "15",
+      "tokens": 417,
+      "elapsed": 6.860729932785034
+    },
+    {
+      "q": 21,
+      "got": "14",
+      "expected": "14",
+      "tokens": 181,
+      "elapsed": 4.512759447097778
+    },
+    {
+      "q": 22,
+      "got": "7",
+      "expected": "7",
+      "tokens": 164,
+      "elapsed": 3.0301177501678467
+    },
+    {
+      "q": 23,
+      "got": "8",
+      "expected": "8",
+      "tokens": 135,
+      "elapsed": 2.8200478553771973
+    },
+    {
+      "q": 24,
+      "got": "26.00",
+      "expected": "26",
+      "tokens": 262,
+      "elapsed": 3.9525201320648193
+    },
+    {
+      "q": 25,
+      "got": "2",
+      "expected": "2",
+      "tokens": 265,
+      "elapsed": 4.891773700714111
+    },
+    {
+      "q": 26,
+      "got": "243",
+      "expected": "243",
+      "tokens": 208,
+      "elapsed": 3.489567279815674
+    },
+    {
+      "q": 27,
+      "got": "16.00",
+      "expected": "16",
+      "tokens": 203,
+      "elapsed": 3.085221529006958
+    },
+    {
+      "q": 28,
+      "got": "25",
+      "expected": "25",
+      "tokens": 165,
+      "elapsed": 2.763463258743286
+    },
+    {
+      "q": 29,
+      "got": "104",
+      "expected": "104",
+      "tokens": 232,
+      "elapsed": 4.040719747543335
+    },
+    {
+      "q": 30,
+      "got": "109",
+      "expected": "109",
+      "tokens": 300,
+      "elapsed": 5.009774923324585
+    },
+    {
+      "q": 31,
+      "got": "80",
+      "expected": "80",
+      "tokens": 268,
+      "elapsed": 4.432331800460815
+    },
+    {
+      "q": 32,
+      "got": "35",
+      "expected": "35",
+      "tokens": 100,
+      "elapsed": 1.9699335098266602
+    },
+    {
+      "q": 33,
+      "got": "70",
+      "expected": "70",
+      "tokens": 297,
+      "elapsed": 4.851512432098389
+    },
+    {
+      "q": 34,
+      "got": "23",
+      "expected": "23",
+      "tokens": 214,
+      "elapsed": 3.073918342590332
+    },
+    {
+      "q": 35,
+      "got": "9",
+      "expected": "9",
+      "tokens": 156,
+      "elapsed": 2.695028781890869
+    },
+    {
+      "q": 36,
+      "got": "75.00",
+      "expected": "75",
+      "tokens": 183,
+      "elapsed": 2.8487560749053955
+    },
+    {
+      "q": 37,
+      "got": "2",
+      "expected": "2",
+      "tokens": 352,
+      "elapsed": 6.577226877212524
+    },
+    {
+      "q": 38,
+      "got": "10",
+      "expected": "10",
+      "tokens": 205,
+      "elapsed": 3.3655993938446045
+    },
+    {
+      "q": 39,
+      "got": "18",
+      "expected": "18",
+      "tokens": 365,
+      "elapsed": 7.878216505050659
+    },
+    {
+      "q": 40,
+      "got": "8",
+      "expected": "8",
+      "tokens": 194,
+      "elapsed": 3.1791915893554688
+    },
+    {
+      "q": 41,
+      "got": "200",
+      "expected": "200",
+      "tokens": 374,
+      "elapsed": 6.261711359024048
+    },
+    {
+      "q": 42,
+      "got": "26",
+      "expected": "26",
+      "tokens": 132,
+      "elapsed": 2.7911436557769775
+    },
+    {
+      "q": 43,
+      "got": "48",
+      "expected": "48",
+      "tokens": 402,
+      "elapsed": 5.464962720870972
+    },
+    {
+      "q": 44,
+      "got": "20.00",
+      "expected": "20",
+      "tokens": 297,
+      "elapsed": 4.4476001262664795
+    },
+    {
+      "q": 45,
+      "got": "104",
+      "expected": "104",
+      "tokens": 211,
+      "elapsed": 3.3762552738189697
+    },
+    {
+      "q": 46,
+      "got": "163",
+      "expected": "163",
+      "tokens": 257,
+      "elapsed": 5.937365293502808
+    },
+    {
+      "q": 47,
+      "got": "800",
+      "expected": "800",
+      "tokens": 364,
+      "elapsed": 5.354369401931763
+    },
+    {
+      "q": 48,
+      "got": "8",
+      "expected": "8",
+      "tokens": 128,
+      "elapsed": 2.432821273803711
+    },
+    {
+      "q": 49,
+      "got": "30",
+      "expected": "30",
+      "tokens": 153,
+      "elapsed": 2.1413309574127197
+    }
+  ]
+}

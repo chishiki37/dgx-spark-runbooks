@@ -18,7 +18,8 @@ Companion repos (model-specific, published separately):
 | [DeepSeek V4 Flash Abliterated](runbook-deepseek-v4-flash-abliterated-dspark.md) | drowzeys/…-DSpark-Abliterated-32-32 (gated) | NVFP4 | 2 | (0731 path) | 1M |
 | [MiMo V2.5](runbook-mimo-v25-nvfp4.md) | MiMo-V2.5 309B-A15B | NVFP4 | 2 | ~19 | 32K |
 | [MiMo V2.6 Flash DFlash TP2](runbook-mimo-v26-flash-dflash-tp2.md) | XiaomiMiMo/MiMo-V2.6-Flash-RL 309B-A15B (omnimodal) | native FP8 + MXFP4 experts | 2 (TP2, DFlash-7; worker via Docker NFS volume) | **48.9 C1 / 100.7 C4 / 162.9 C8 agg** (async-off, correct); 55/121/194 async-on (corruption risk) | 300K |
-| [MiMo V2.6 Pro DFlash TP8](runbook-mimo-v26-pro-dflash-tp8.md) ⭐ current | XiaomiMiMo/MiMo-V2.6-Pro-RL (omnimodal, 573.5 GB) | native FP8 block + Triton linear | 8 (TP8, DFlash-7; Docker NFS volumes; 1d49 borrowed) | **30.2 C1 / 54.2 C4 / 71.4 C8 agg**; 3.2× over the 6-node PP3×TP2 baseline | 32K (KV pool 4.46M tok) |
+| [MiMo V2.6 Pro DFlash TP8 (vLLM)](runbook-mimo-v26-pro-dflash-tp8.md) | XiaomiMiMo/MiMo-V2.6-Pro-RL (omnimodal, 573.5 GB) | native FP8 block + marlin linear + EP | 8 (TP8, DFlash-7; Docker NFS volumes; 1d49 borrowed) | **31.4 C1 / 62.7 C4 / 78.7 C8 agg** (marlin+EP arm); 30.2/54.2/71.4 triton arm | 32K (KV pool 4.46M tok) |
+| [MiMo V2.6 Pro SGLang TP8](runbook-mimo-v26-pro-sglang-tp8.md) ⭐ current | XiaomiMiMo/MiMo-V2.6-Pro-RL (rhys101 a14 recipe, single-rail adapt) | MXFP4 experts on Marlin, DFlash-8 adaptive, FA4 | 8 (TP8; full local model copy per node) | **46.7 C1 / 111.0 C4 / 157.4 C8 agg**; GSM8K 96% true, HumanEval 98%; long-extraction 24/24 | 262K |
 | [Hy3 295B](runbook-hy3-295b-nvfp4.md) | Hunyuan-3 295B-A21B | NVFP4-W4A16 | 2 | ~22 | 128K |
 | [Laguna S 2.1](runbook-laguna-s21-nvfp4.md) | poolside/Laguna-S-2.1 118B-A8B | NVFP4 | 1–2 | ~41 (solo) | 262K |
 | [MiniMax M2.7 AWQ](runbook-minimax-m27-awq.md) | MiniMax-M2.7 456B-A45B | AWQ | 2 | ~32 | 131K |

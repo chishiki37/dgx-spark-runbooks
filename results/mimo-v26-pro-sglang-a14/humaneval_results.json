@@ -1,0 +1,9 @@
+{
+  "benchmark": "HumanEval",
+  "model": "mimo-v2.6-pro",
+  "passed": 49,
+  "total": 50,
+  "pass_at_1": 98.0,
+  "truncations": 0,
+  "real_bugs": 1
+}
