@@ -1,4 +1,4 @@
-# Runbook: MiMo-V2.6-Pro-RL on 8× DGX Spark (TP8, DFlash-7, Triton FP8 linear)
+# Runbook: MiMo-V2.6-Pro-RL on 8× DGX Spark (TP8, DFlash-7, marlin linear + EP)
 
 - **Model:** `XiaomiMiMo/MiMo-V2.6-Pro-RL` (native FP8 block-quantized MoE, omnimodal, 70 layers, hidden 6144, 128 attn heads / 8 KV heads, dense intermediate 16384, MoE intermediate 2048) — **573.5 GB on disk**: 130 safetensors shards + `dflash/` 5-layer drafter (5.5 GB, unquantized) + `audio_tokenizer/`.
 - **Source recipe:** [tonyd2wild/MiMo-V2.6-Flash-2x-DGX-Spark](https://github.com/tonyd2wild/MiMo-V2.6-Flash-2x-DGX-Spark) launch kit (`serve_pro.sh`, per-rank docker + Docker-NFS worker volumes), extended by this campaign to 8 ranks and a Triton linear backend.
@@ -25,7 +25,7 @@ TP8 needs `num_attention_heads % 8 == 0` (128 ✓), `num_kv_heads % 8 == 0` (8 �
 |---|---|---|
 | `--tensor-parallel-size 8 --pipeline-parallel-size 1` | 8 ranks, 8 nodes | mp backend, ranks 1–7 `--headless` |
 | `--speculative-config` | `{"method":"dflash","model":"/models/mimo/dflash","num_speculative_tokens":7}` | 5-layer drafter, unquantized |
-| `--linear-backend` | **triton** | **required**: CUTLASS block-FP8 kernel rejects this model's TP8 shard shapes at runtime (appendix A3); MoE experts unaffected (marlin) |
+| `--linear-backend` | **triton** | delivered arm. CUTLASS block-FP8 kernel rejects this model's TP8 shard shapes at runtime (appendix A3); MoE experts unaffected (marlin). **Superseded by the marlin+EP arm below — see "Marlin A/B"** |
 | `--moe-backend` | marlin | DeepGEMM stays off (`VLLM_USE_DEEP_GEMM=0`, SM12x fp8 corruption) |
 | `--kv-cache-dtype` | fp8 | pool **4,457,547 tokens** (136× at 32K) |
 | `--gpu-memory-utilization` | 0.80 | fits even with ~21 GiB orphaned on the head (appendix A6); KV still 19.24 GiB/rank |
@@ -51,6 +51,25 @@ Per-stream C1 by category: coding **55.9** · structured 54.1 · ceiling-count 5
 DFlash acceptance (of 7 drafted) at C1: ceiling-count **6.94** · structured 6.69 · format 5.88 · coding 5.19 · math 4.58 · json 2.79 · reasoning 2.03 · summary 1.62 · prose 1.20 · narrative 0.81. Acceptance is category-bound — always quote the category with the number.
 
 Cold prefill (unique prefix): 463 tok/s @2K (TTFT 4.3 s) · 570 @8K (13.9 s) · 584 @32K (54.5 s).
+
+### Marlin A/B: TP8 + DFlash-7 + marlin linear + EP, full recipe flags (measured 2026-09-28)
+
+Same battery, same 8 nodes, `EXTRA_ARGS="--linear-backend marlin --enable-expert-parallel --enable-ep-weight-filter --disable-custom-all-reduce --enable-chunked-prefill --enable-prefix-caching --max-num-batched-tokens 8192 --hf-overrides {\"moe_router_dtype\":\"bfloat16\"} --compilation-config {\"cudagraph_mode\":\"FULL_DECODE_ONLY\",\"max_cudagraph_capture_size\":128} --kernel-config {\"ir_op_priority\":{\"rms_norm\":[\"vllm_c\"],\"fused_add_rms_norm\":[\"vllm_c\"]}} --language-model-only"`, `VLLM_TEST_FORCE_FP8_MARLIN=1`, spec config extended with `"draft_tensor_parallel_size":8`. Raw results: `~/mimo-campaign/pro-marlin2-tp8/bench-pro-marlin2-tp8.{json,md}` on 04af.
+
+| metric | triton (delivered) | marlin+EP | Δ |
+|---|---|---|---|
+| C1 aggregate | 30.19 | **31.43** | +4% |
+| C1 per-stream | 35.23 | **35.89** | +2% |
+| C1 TTFT | 0.54 s | **0.47 s** | −13% |
+| C4 aggregate | 54.18 | **62.69** | **+16%** |
+| C8 aggregate | 71.43 | **78.74** | **+10%** |
+| C8 TTFT | 1.60 s | **1.42 s** | −11% |
+| prefill @2K | 463 tok/s | **1104 tok/s** | **2.4×** |
+| prefill @8K | 570 | 555 | ~flat |
+| prefill @32K | 584 | 555 | ~flat |
+
+Marlin wins across the board: better decode at every concurrency, better TTFTs, and 2.4× short-prompt prefill (chunked prefill + marlin linear). DFlash acceptance is unchanged (category-bound, e.g. ceiling-count 6.88–6.92, narrative ~0.75). It also sidesteps the CUTLASS N=3392 shard failure (A3) — no triton backend needed — at the cost of a slower boot (~41 min: EP weight filtering slows shard loading to ~20 s/shard vs 3.8 s). **Recommended config for future Pro-RL runs.** Vs the Spark Arena reference submission (Sloptimist Prime, same recipe class): we now lead at matched concurrency (C4 62.7 vs ~35.6, C8 78.7 vs ~45.2); their pp2048 prefill (~1744 tok/s) still leads our 1104.
+
 
 ### Vs the 6-node PP3×TP2 baseline (same battery, same day, spec-free)
 
@@ -86,7 +105,9 @@ The gain compounds three effects: no pipeline bubbles (PP3 → PP1), speculation
 | PP3×TP2 + DFlash | `NotImplementedError`: drafter lacks `SupportsPP` | structurally blocked |
 | TP8 + DFlash, GMU 0.88, cutlass linear | NCCL fd exhaustion → after fix: CUTLASS "Invalid status" on N=3392 shard | rejected → fixed by A2+A3 |
 | TP8 no-spec, cutlass linear | same CUTLASS failure (proves it's sharding, not speculation) | diagnostic arm |
-| **TP8 + DFlash-7 + triton linear, GMU 0.80** | **30.2/54.2/71.4 agg** | **delivered** |
+| TP8 + DFlash-7 + triton linear, GMU 0.80 | 30.2/54.2/71.4 agg | delivered 2026-09-22 |
+| TP8 + DFlash-7 + **marlin** linear only (`VLLM_TEST_FORCE_FP8_MARLIN=1`) | engine died on first request: `TimeoutError: RPC call to execute_model timed out` → EngineDeadError; no numbers | rejected → fixed by A8+A9 |
+| **TP8 + DFlash-7 + marlin linear + EP full recipe flags** | **31.4/62.7/78.7 agg, prefill 1104 @2K** | **best measured — recommended** |
 
 Not yet tried: stok sweep at TP8 (k=8 rejected on Flash, but acceptance here runs 6.9/7 on saturated categories), SEQS=16 (rejected on Flash), MAXLEN 131K (KV pool supports it; 32K chosen for battery parity).
 
@@ -99,6 +120,9 @@ Not yet tried: stok sweep at TP8 (k=8 rejected on Flash, but acceptance here run
 - **A5 — GMU admission at 131K:** KV leftover must hold at least one max-length request. GMU 0.85/131K left 5.0 GiB/rank → `_check_enough_kv_cache_memory` ValueError. Either cut `--max-model-len` or raise GMU; at TP8 both knobs are comfortable (0.80/32K → 19.24 GiB/rank).
 - **A6 — orphaned GPU memory on GB10:** a SIGKILLed NCCL-crashed container leaked ~21 GiB on the head, invisible to `ps`/`free`/`nvidia-smi --query-compute-apps` (reads 100.79/121.69 GiB free forever after). Only a node reboot reclaims it; until then, size GMU against the *measured* free, not the nominal (0.88 → 0.80 here).
 - **A7 — ops footgun:** `ssh host 'pkill -f "vllm serve"'` self-matches the remote wrapper shell (and the local one when the terminal host is itself a target). Use `pkill -f "vllm [s]erve"`, and check `hostname` before fleet-wide loops — terminal sessions can drift between nodes after context compaction.
+- **A8 — FP8 marlin is env-gated on SM121:** `--linear-backend marlin` alone exits all ranks at init with `ValueError: Failed to find a kernel that can implement the ScaledMM linear layer … MarlinFP8ScaledMMLinearKernel: To apply FP8 Marlin on high-capability GPUs, please set VLLM_TEST_FORCE_FP8_MARLIN`. Fix: `-e VLLM_TEST_FORCE_FP8_MARLIN=1`. Fails safe (kernel selection at startup, no half-booted cluster). Grep the *untruncated* error for the exact variable name — don't guess the flag.
+- **A9 — marlin linear alone hangs the first forward pass:** with `--linear-backend marlin` + the delivered triton-arm flag set, the engine boots clean (API opens after ~41 min) then the *first* bench request never completes: EngineCore logs repeated `shm_broadcast: No available shared memory broadcast block found in 60 seconds` during capture, then `TimeoutError: RPC call to execute_model timed out` → `EngineDeadError`, HTTP 500 to the client. Root cause is the **unsharded DFlash drafter under expert parallel** — the reference recipe pairs marlin with `--enable-expert-parallel` + `--enable-ep-weight-filter` and shards the draft TP-wide. Fix: adopt the full recipe flag set (see "Marlin A/B") **and** add `"draft_tensor_parallel_size": 8` to `--speculative-config`. Note the shm_broadcast warnings appear *before* the timeout and are the early signal, not noise. Also: marlin does NOT dodge A3's shape problem by itself — the working arm replaces the whole linear path, so don't read A8/A9 as "marlin needs no other flags".
+- **A10 — EP slows weight loading ~5×:** the marlin+EP arm loads shards at ~20 s/shard (vs 3.8 s with triton, ~527 GiB over NFS on workers) → budget ~41 min to API-ready, not ~15. Size wait loops accordingly; the slowdown is `--enable-ep-weight-filter` re-filtering expert weights per rank, not a fault.
 
 ## Node notes
 
