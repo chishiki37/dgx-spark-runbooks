@@ -31,6 +31,9 @@ Companion repos (model-specific, published separately):
 | [GLM-5.3 Int4-Int8Mix NFS](runbook-glm53-int4-int8mix-nfs.md) | vikasclawd/GLM-5.3-Int4-Int8Mix (743B) | Int4-Int8Mix | 4 (TP4+MTP, NFS-o-RDMA weights) | 26.3 C1 / 56.1 C4 / 89.2 C8 agg | 200K |
 | [GLM-5.3 Flash NVFP4 + DFlash2](runbook-glm53-flash-dflash2-tp2.md) | RedHatAI/GLM-5.3-Flash-NVFP4 + incoai/GLM-5.3-Flash-DFlash2 | NVFP4 (compressed-tensors W4A4) | 2 (TP2, DFlash2 k5 + CUDA graphs) | **22.7 C1 prose / 32.1 C1 code / 51.2 C4 / 72.4 C8 agg** | 262K |
 | [GLM-5.3 Flash NVFP4 MTP](runbook-glm53-flash-nvfp4.md) (superseded by DFlash2 lane; ModelOpt weights corrupt tokens) | LibertAIDAI/GLM-5.3-Flash-NVFP4 | NVFP4 weight-only | 2 or 4 (TP2/TP4 + MTP-3) | see runbook | 262K–1M |
+| [Qwen3.8-Flash-Next TensorFold](runbook-qwen38-flashnext-tensorfold.md) ⭐ single-Spark | Vontra/Qwen3.8-Flash-Next-MLX-4bit-MTP (MiaAI recipe) | MLX 4-bit + MTP drafts, int8 KV | 1 | **63.4 C1 / 129.8 C4 / 152.4 C8 agg**; prefill ~2.0K | 262K |
+| [Qwen3.8-27B TensorFold](runbook-qwen38-27b-tensorfold.md) ⭐ single-Spark | Vontra/Qwen3.8-27B-MLX-4bit + z-lab DFlash2 drafter (MiaAI recipe) | MLX 4-bit + DFlash2, fp8 KV | 1 | **80.1 C1 / 184.4 C4 / 243.9 C8 agg**; TTFT 0.13 s | 262K |
+| [GLM-5.3 753B TensorFold TP4](runbook-glm53-tensorfold-tp4.md) ⭐ full-size GLM | drowzeys/keys-GLM-5.3-EXL3-2.75BPW (drowzeys recipe) | EXL3 mixed-K 2.75 bpw + DFlash2 | 4 (TP4, single rail) | **37.1 C1 (44.2 prose thinking-on)**; prefill ~1.05K @32K; beats recipe claims | 140K (1M w/ DCP4) |
 | [DiffusionGemma 26B](runbook-diffusion-gemma-26b.md) | google/diffusiongemma-26B-A4B-it | BF16 | 1 | ~119 avg (diffusion) | — |
 
 `recipes/` contains the matching sparkrun/vLLM recipe YAMLs (from `eugr/spark-vllm-docker`-style deployments).
