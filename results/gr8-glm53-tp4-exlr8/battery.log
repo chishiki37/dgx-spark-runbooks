@@ -1,0 +1,60 @@
+[gr8-glm53-tp4-exlr8-home] warmup
+  C1 coding        agg   58.09 tok/s  per-stream 67.73  ttft 0.504s  acc/draft 5.03
+  C1 json          agg   46.72 tok/s  per-stream 56.08  ttft 0.453s  acc/draft 3.52
+  C1 narrative     agg   33.93 tok/s  per-stream 36.6  ttft 0.399s  acc/draft 0.93
+  C1 prose         agg   38.99 tok/s  per-stream 42.64  ttft 0.388s  acc/draft 1.52
+  C1 math          agg   58.92 tok/s  per-stream 68.43  ttft 0.455s  acc/draft 4.47
+  C1 reasoning     agg   37.30 tok/s  per-stream 40.49  ttft 0.446s  acc/draft 1.39
+  C1 summary       agg   37.01 tok/s  per-stream 45.64  ttft 0.789s  acc/draft 1.71
+  C1 structured    agg   57.10 tok/s  per-stream 78.05  ttft 0.511s  acc/draft 6.07
+  C1 format        agg   58.55 tok/s  per-stream 67.85  ttft 0.483s  acc/draft 4.29
+  C1 ceiling_count agg   74.04 tok/s  per-stream 82.96  ttft 0.372s  acc/draft 6.52
+  C4 coding        agg   73.30 tok/s  per-stream 24.54  ttft 1.914s  acc/draft 1.98
+  C4 json          agg   63.84 tok/s  per-stream 24.52  ttft 1.899s  acc/draft 1.8
+  C4 narrative     agg   57.64 tok/s  per-stream 16.86  ttft 1.62s  acc/draft 0.91
+  C4 prose         agg   65.89 tok/s  per-stream 21.21  ttft 1.655s  acc/draft 1.35
+  C4 math          agg   72.47 tok/s  per-stream 24.43  ttft 1.814s  acc/draft 1.8
+  C4 reasoning     agg   64.42 tok/s  per-stream 19.53  ttft 1.776s  acc/draft 1.3
+  C4 summary       agg   52.68 tok/s  per-stream 19.21  ttft 2.656s  acc/draft 1.37
+  C4 structured    agg   62.15 tok/s  per-stream 23.47  ttft 1.974s  acc/draft 1.87
+  C4 format        agg   58.34 tok/s  per-stream 26.89  ttft 2.037s  acc/draft 2.02
+  C4 ceiling_count agg   85.36 tok/s  per-stream 26.94  ttft 1.684s  acc/draft 2.03
+  C8 coding        agg   87.37 tok/s  per-stream 16.8  ttft 4.175s  acc/draft 1.96
+  C8 json          agg   73.77 tok/s  per-stream 17.68  ttft 4.105s  acc/draft 1.78
+  C8 narrative     agg   68.62 tok/s  per-stream 11.76  ttft 3.67s  acc/draft 0.91
+  C8 prose         agg   76.65 tok/s  per-stream 13.82  ttft 3.73s  acc/draft 1.24
+  C8 math          agg   87.61 tok/s  per-stream 17.0  ttft 4.0s  acc/draft 1.8
+  C8 reasoning     agg   73.72 tok/s  per-stream 12.89  ttft 3.986s  acc/draft 1.2
+  C8 summary       agg   61.31 tok/s  per-stream 12.88  ttft 5.326s  acc/draft 1.37
+  C8 structured    agg   68.32 tok/s  per-stream 18.26  ttft 4.403s  acc/draft 1.97
+  C8 format        agg   73.15 tok/s  per-stream 18.16  ttft 4.323s  acc/draft 1.88
+  C8 ceiling_count agg  102.15 tok/s  per-stream 19.13  ttft 3.784s  acc/draft 2.0
+  prefill   2000: {'target': 2000, 'prompt_tokens': 1494, 'ttft_s': 2.125, 'prefill_tok_s': 702.9}
+  prefill   8000: {'target': 8000, 'prompt_tokens': 5938, 'ttft_s': 6.343, 'prefill_tok_s': 936.2}
+  prefill  32000: {'target': 32000, 'prompt_tokens': 23844, 'ttft_s': 20.828, 'prefill_tok_s': 1144.8}
+  prefill  64000: {'target': 64000, 'prompt_tokens': 47771, 'ttft_s': 42.868, 'prefill_tok_s': 1114.4}
+Prompt set `v1` (identical across boots), temperature 0, thinking off. Tokens from the server's usage block; TTFT = first token delta.
+
+### Throughput by concurrency (9 categories; the counting ceiling is excluded)
+
+| C | aggregate tok/s | per-stream tok/s | mean TTFT (s) |
+|---|---|---|---|
+| C1 | 47.4 | 55.95 | 0.492 |
+| C4 | 63.41 | 22.3 | 1.927 |
+| C8 | 74.5 | 15.47 | 4.191 |
+
+### Per-stream tok/s by category
+
+| category | C1 | C4 | C8 |
+|---|---|---|---|
+| coding | 67.73 | 24.54 | 16.8 |
+| json | 56.08 | 24.52 | 17.68 |
+| narrative | 36.6 | 16.86 | 11.76 |
+| prose | 42.64 | 21.21 | 13.82 |
+| math | 68.43 | 24.43 | 17.0 |
+| reasoning | 40.49 | 19.53 | 12.89 |
+| summary | 45.64 | 19.21 | 12.88 |
+| structured | 78.05 | 23.47 | 18.26 |
+| format | 67.85 | 26.89 | 18.16 |
+| ceiling_count | 82.96 | 26.94 | 19.13 |
+wrote /home/vikassridhar/gr8-campaign/bench-gr8-glm53-tp4-exlr8-home.json and .md
